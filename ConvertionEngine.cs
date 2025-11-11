@@ -11,6 +11,7 @@ namespace Discord_Splitter
        public void StartEngine(bool splitter = true, double splitterValue = 9.5)
         {
             Console.WriteLine("Hi!");
+            Console.WriteLine("Hi!");
         }
     }
 }
