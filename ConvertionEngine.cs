@@ -28,10 +28,18 @@ namespace Discord_Splitter
 
                 long fileSize = new FileInfo(file).Length;
 
-                if (splitter == false || fileSize <= splitterValue) // This eats up alot of RAM, can use streaming instead.
+                if (splitter == false || fileSize <= splitterValue)
                 {
-                    byte[] bytes = File.ReadAllBytes(file);
-                    File.WriteAllBytes(outputPath, bytes);
+                    using (FileStream source = File.OpenRead(file))
+                    using (FileStream destination = File.Create(outputPath))
+                    {
+                        byte[] buffer = new byte[1024 * 1024];
+                        int bytesRead;
+                        while ((bytesRead = source.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            destination.Write(buffer, 0, bytesRead);
+                        }
+                    }
                 }
                 else
                 {
