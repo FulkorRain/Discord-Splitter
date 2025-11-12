@@ -9,7 +9,7 @@ namespace Discord_Splitter
         {
             Console.Title = "DiscordSplitter";
             Console.WriteLine("DiscordSplitter V3.0");
-            string[] folders = { "Input", "Output" };
+            string[] folders = { "Input", "Output", "MergeInput", "MergeOutput" };
             foreach (var folder in folders)
             {
                 Console.WriteLine($"Missing Directory Created: {folder}");
@@ -22,15 +22,25 @@ namespace Discord_Splitter
             ConvertionEngine engine = new();
             while (programActive)
             {
-                Console.WriteLine(" (A) Convert Files. (B) Options. (C) Exit. ");
+                Console.WriteLine(" (A) Convert/Merge Files. (B) Options. (C) Exit. ");
                 Console.WriteLine($"FileSplitter ({fileSplitter}) ({fileSplitterValue} MB).");
                 string choice = (Console.ReadLine() ?? "").Trim().ToLower();
 
                 switch (choice)
                 {
                     case "a":
-                        engine.StartEngine(fileSplitter, fileSplitterValue);
-                        break;
+                        Console.WriteLine(" (A) Convert Files. (B) Merge Files.");
+                        choice = (Console.ReadLine() ?? "").Trim().ToLower();
+                        switch (choice)
+                        {
+                            case "a":
+                                engine.StartEngine(fileSplitter, fileSplitterValue);
+                                break;
+                            case "b":
+                                engine.MergeFiles();
+                                break;
+                        }
+                            break;
 
                     case "b":
                         Console.WriteLine($"FileSplitter ({fileSplitter}) ({fileSplitterValue} MB).");

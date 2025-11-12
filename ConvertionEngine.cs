@@ -10,6 +10,8 @@ namespace Discord_Splitter
     {
         private readonly string inputFolder = "Input";
         private readonly string outputFolder = "Output";
+        private readonly string mergeinputFolder = "MergeInput";
+        private readonly string mergeoutputFolder = "MergeOutput";
         public void StartEngine(bool splitter = true, double splitterValueMB = 9.5)
         {
             long splitterValue = (long)(splitterValueMB * 1024 * 1024);
@@ -30,10 +32,32 @@ namespace Discord_Splitter
                 }
                 else
                 {
-                    // TODO: Splitter.
+                    string basefolderName = Path.GetFileNameWithoutExtension(file);
+                    string basefolderPath = Path.Combine(outputFolder, basefolderName);
+                    Directory.CreateDirectory(basefolderPath);
+
+                    using FileStream inputStream = File.OpenRead(file);
+                    byte[] buffer = new byte[splitterValue];
+                    int partIndex = 0;
+                    int bytesRead;
+
+                    while ((bytesRead = inputStream.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        string partFileName = $"{fileName}_part{partIndex:D3}.bin";
+                        string parthPath = Path.Combine(basefolderPath, partFileName);
+
+                        using FileStream partStream = File.Create(parthPath);
+                        partStream.Write(buffer, 0, bytesRead);
+                        partIndex++;
+                    }
                 }
 
             }
+        }
+
+        public void MergeFiles()
+        {
+
         }
     }
 }
