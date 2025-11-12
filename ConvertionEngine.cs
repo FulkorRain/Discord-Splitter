@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,9 +24,11 @@ namespace Discord_Splitter
                 string fileExtension = Path.GetExtension(file);
 
                 string outputPath = Path.Combine(outputFolder, $"{relativePath}.bin");
+                Directory.CreateDirectory(Path.GetDirectoryName(outputPath) ?? ".");
+
                 long fileSize = new FileInfo(file).Length;
 
-                if (splitter == false || fileSize <= splitterValue)
+                if (splitter == false || fileSize <= splitterValue) // This eats up alot of RAM, can use streaming instead.
                 {
                     byte[] bytes = File.ReadAllBytes(file);
                     File.WriteAllBytes(outputPath, bytes);
@@ -57,7 +60,47 @@ namespace Discord_Splitter
 
         public void MergeFiles()
         {
+            foreach (var dir in Directory.EnumerateDirectories(mergeinputFolder))
+            {
+                string[] partFiles = Directory.GetFiles(dir, "*_part*.bin", SearchOption.TopDirectoryOnly);
+                if (partFiles.Length == 0)
+                {
+                    continue;
+                }
 
+                Array.Sort(partFiles);
+
+                string firstPartName = Path.GetFileName(partFiles[0]);
+                string originalName = firstPartName.Split("_part")[0];
+
+                string outputPath = Path.Combine(mergeoutputFolder, originalName);
+                Directory.CreateDirectory(Path.GetDirectoryName(outputPath) ?? ".");
+
+                using (FileStream outputStream = File.Create(outputPath))
+                {
+                    foreach (var part in partFiles)
+                    {
+                        using FileStream inputStream = File.OpenRead(part);
+                        inputStream.CopyTo(outputStream);
+
+                    }
+                }
+
+            }
+            foreach (var file in Directory.EnumerateFiles(mergeinputFolder, "*.bin", SearchOption.AllDirectories))
+            {
+                string name = Path.GetFileName(file);
+                if (name.Contains("_part"))
+                {
+                    continue;
+                }
+
+                string restoredName = Path.GetFileNameWithoutExtension(file);
+                string outputPath = Path.Combine(mergeoutputFolder, restoredName);
+                Directory.CreateDirectory(Path.GetDirectoryName(outputPath) ?? ".");
+
+                File.Copy(file, outputPath, true);
+            }
         }
     }
 }
