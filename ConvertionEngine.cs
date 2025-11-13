@@ -44,8 +44,7 @@ namespace Discord_Splitter
                 else
                 {
                     string basefolderName = Path.GetFileNameWithoutExtension(file);
-                    // CHANGED: include the relative directory so parts mirror the Input tree
-                    string basefolderPath = Path.Combine(outputFolder, Path.GetDirectoryName(relativePath) ?? "", basefolderName); // CHANGED
+                    string basefolderPath = Path.Combine(outputFolder, Path.GetDirectoryName(relativePath) ?? "", basefolderName);
                     Directory.CreateDirectory(basefolderPath);
 
                     using FileStream inputStream = File.OpenRead(file);
@@ -69,8 +68,7 @@ namespace Discord_Splitter
 
         public void MergeFiles()
         {
-            // CHANGED: recurse into all subfolders so split groups in nested dirs are found
-            foreach (var dir in Directory.EnumerateDirectories(mergeinputFolder, "*", SearchOption.AllDirectories)) // CHANGED
+            foreach (var dir in Directory.EnumerateDirectories(mergeinputFolder, "*", SearchOption.AllDirectories))
             {
                 string[] partFiles = Directory.GetFiles(dir, "*_part*.bin", SearchOption.TopDirectoryOnly);
                 if (partFiles.Length == 0)
@@ -82,12 +80,10 @@ namespace Discord_Splitter
 
                 string firstPartName = Path.GetFileName(partFiles[0]);
                 string originalName = firstPartName.Split("_part")[0];
-                // ADDED: compute the parent relative directory to mirror the tree in MergeOutput
-                string relDir = Path.GetRelativePath(mergeinputFolder, dir);                  // ADDED
-                string parentRelDir = Path.GetDirectoryName(relDir) ?? "";                   // ADDED
+                string relDir = Path.GetRelativePath(mergeinputFolder, dir);
+                string parentRelDir = Path.GetDirectoryName(relDir) ?? "";
 
-                // CHANGED: write merged file into mirrored subfolder instead of MergeOutput root
-                string outputPath = Path.Combine(mergeoutputFolder, parentRelDir, originalName); // CHANGED
+                string outputPath = Path.Combine(mergeoutputFolder, parentRelDir, originalName);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath) ?? ".");
 
                 using (FileStream outputStream = File.Create(outputPath))
@@ -109,13 +105,11 @@ namespace Discord_Splitter
                     continue;
                 }
 
-                // ADDED: keep the original relative subfolder when restoring single .bin files
-                string relativeFile = Path.GetRelativePath(mergeinputFolder, file);          // ADDED
-                string relativeDir = Path.GetDirectoryName(relativeFile) ?? "";              // ADDED
+                string relativeFile = Path.GetRelativePath(mergeinputFolder, file);
+                string relativeDir = Path.GetDirectoryName(relativeFile) ?? "";
 
                 string restoredName = Path.GetFileNameWithoutExtension(file);
-                // CHANGED: place restored file into mirrored subfolder
-                string outputPath = Path.Combine(mergeoutputFolder, relativeDir, restoredName); // CHANGED
+                string outputPath = Path.Combine(mergeoutputFolder, relativeDir, restoredName);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath) ?? ".");
 
                 File.Copy(file, outputPath, true);
