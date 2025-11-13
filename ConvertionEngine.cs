@@ -64,9 +64,10 @@ namespace Discord_Splitter
                     }
                 }
 
-                Console.WriteLine("Convertion Task Finished.");
+
 
             }
+            Console.WriteLine("Convertion Task Finished.");
         }
 
         public void MergeFiles()
