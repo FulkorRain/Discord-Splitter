@@ -16,6 +16,7 @@ namespace Discord_Splitter
         public void StartEngine(bool splitter = true, double splitterValueMB = 9.5)
         {
             long splitterValue = (long)(splitterValueMB * 1024 * 1024);
+            Console.WriteLine("Processing Files. . .");
 
             foreach (var file in Directory.EnumerateFiles(inputFolder, "*", SearchOption.AllDirectories))
             {
@@ -63,11 +64,15 @@ namespace Discord_Splitter
                     }
                 }
 
+                Console.WriteLine("Convertion Task Finished.");
+
             }
         }
 
         public void MergeFiles()
         {
+            Console.WriteLine("Processing Files. . .");
+
             foreach (var dir in Directory.EnumerateDirectories(mergeinputFolder, "*", SearchOption.AllDirectories))
             {
                 string[] partFiles = Directory.GetFiles(dir, "*_part*.bin", SearchOption.TopDirectoryOnly);
@@ -114,6 +119,8 @@ namespace Discord_Splitter
 
                 File.Copy(file, outputPath, true);
             }
+
+            Console.WriteLine("Merge Task Finished.");
         }
     }
 }

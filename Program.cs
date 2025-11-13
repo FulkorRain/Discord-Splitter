@@ -8,12 +8,15 @@ namespace Discord_Splitter
         static void Main(string[] args)
         {
             Console.Title = "DiscordSplitter";
-            Console.WriteLine("DiscordSplitter V3.0");
+            Console.WriteLine("DiscordSplitter V3.1");
             string[] folders = { "Input", "Output", "MergeInput", "MergeOutput" };
             foreach (var folder in folders)
             {
-                Console.WriteLine($"Missing Directory Created: {folder}");
-                Directory.CreateDirectory(folder);
+                if (!Directory.Exists(folder))
+                {
+                    Console.WriteLine($"Missing Directory Created: {folder}");
+                    Directory.CreateDirectory(folder);
+                }
             }
 
             bool programActive = true;
